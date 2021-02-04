@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_main_add_new_note"
+        android:title="New Note"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_main_pick_note"
+        android:title="Pick Note"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_main_rename_note"
+        android:title="Rename Note" />
+    <item
+        android:id="@+id/menu_main_share"
+        android:title="Share" />
+    <item
+        android:id="@+id/menu_main_export_as_file"
+        android:title="Export as file" />
+    <item
+        android:id="@+id/menu_main_delete_note"
+        android:title="Delete Note" />
+    <item
+        android:id="@+id/menu_main_import_folder"
+        android:title="Import Folder" />
+
+    <item
+        android:id="@+id/menu_main_open_file"
+        android:title="Open File" />
+
+    <item
+        android:id="@+id/menu_main_settings"
+        android:title="Settings" />
+
+</menu>
