@@ -26,15 +26,7 @@ data class NoteObject(
     var color: Int = 0,
     @ColumnInfo(name = "type")
     var type: Int = 0
-) : Parcelable
-
-data class Note(
-    @PrimaryKey(autoGenerate = true) var id: Long?,
-    @ColumnInfo(name = "title") var title: String,
-    @ColumnInfo(name = "value") var value: String,
-    @ColumnInfo(name = "type") var type: Int,
-    @ColumnInfo(name = "path") var path: String = ""
-) {
+) : Parcelable{
 
     fun getNoteStoredValue(): String? {
         return if (path.isNotEmpty()) {
@@ -44,7 +36,7 @@ data class Note(
                 null
             }
         } else {
-            value
+            content
         }
     }
 }

@@ -23,7 +23,7 @@ abstract class NotesDatabase : RoomDatabase() {
     companion object {
 
         var instance: NotesDatabase? = null
-        fun getInstance(context: Context) {
+        fun getInstance(context: Context) : NotesDatabase{
             if (instance == null) {
                 if (instance == null) {
                     synchronized(NotesDatabase::class) {

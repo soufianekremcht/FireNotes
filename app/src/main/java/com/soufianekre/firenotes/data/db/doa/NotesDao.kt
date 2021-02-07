@@ -23,4 +23,12 @@ interface NotesDao {
     @Query("SELECT * from notes")
     fun getAllNotes(): Flowable<List<NoteObject>>
 
+
+    @Query("SELECT * from notes WHERE id =:id ")
+    fun getNoteWithId(id: Long): NoteObject?
+
+    fun insertOrUpdate(note: NoteObject): Long
+
+    fun getNoteIdWithPath(path: String): @ParameterName(name = "id") Long?
+
 }

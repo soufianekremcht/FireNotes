@@ -5,10 +5,12 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.soufianekre.firenotes.data.models.NoteObject
 import es.dmoral.toasty.Toasty
 
 
 abstract class BaseActivity<T : ViewDataBinding,V:BaseViewModel> : AppCompatActivity() {
+
 
 
     private var mViewDataBinding: T? = null
