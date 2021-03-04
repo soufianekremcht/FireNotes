@@ -1,4 +1,4 @@
-package com.soufianekre.firenotes.data.models
+package com.soufianekre.firenotes.data.db.models
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo

@@ -3,7 +3,6 @@ package com.soufianekre.firenotes.ui.notes
 import android.content.Context
 import android.graphics.Typeface
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.text.Editable
 import android.text.Selection
 import android.text.TextWatcher
@@ -16,12 +15,17 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import com.soufianekre.firenotes.R
-import com.soufianekre.firenotes.data.models.NoteObject
+import com.soufianekre.firenotes.data.db.models.NoteObject
+import com.soufianekre.firenotes.extensions.*
+import com.soufianekre.firenotes.helper.AppConstants.NOTE_ID
+import com.soufianekre.firenotes.helper.KeyboardUtils
+import com.soufianekre.firenotes.helper.MyMovementMethod
 import com.soufianekre.firenotes.helper.NotesHelper
 import com.soufianekre.firenotes.ui.main.MainActivity
 import com.soufianekre.firenotes.ui.text_history.TextHistory
 import com.soufianekre.firenotes.ui.text_history.TextHistoryItem
 import kotlinx.android.synthetic.main.fragment_text.view.*
+import kotlinx.android.synthetic.main.note_view_horiz_scrollable.view.*
 import java.io.File
 
 
@@ -43,13 +47,13 @@ class TextFragment : NoteFragment() {
         noteId = requireArguments().getLong(NOTE_ID, 0L)
         retainInstance = true
 
-        val layoutToInflate = if (config!!.enableLineWrap) R.layout.note_view_static
+        val layoutToInflate = if (appConfig!!.enableLineWrap) R.layout.note_view_static
         else R.layout.note_view_horiz_scrollable
 
         inflater.inflate(layoutToInflate, view.notes_relative_layout, true)
 
 
-        if (config!!.clickableLinks) {
+        if (appConfig!!.clickableLinks) {
             view.text_note_view.apply {
                 linksClickable = true
                 autoLinkMask = Linkify.WEB_URLS or Linkify.EMAIL_ADDRESSES
@@ -77,7 +81,7 @@ class TextFragment : NoteFragment() {
 
     override fun onPause() {
         super.onPause()
-        if (config!!.autosaveNotes) {
+        if (appConfig!!.autosaveNotes) {
             saveText(false)
         }
 
@@ -86,14 +90,18 @@ class TextFragment : NoteFragment() {
 
     override fun setMenuVisibility(menuVisible: Boolean) {
         super.setMenuVisibility(menuVisible)
-        if (!menuVisible && noteId != 0L && config?.autosaveNotes == true) {
+        if (!menuVisible && noteId != 0L && appConfig?.autosaveNotes == true) {
             saveText(false)
         }
 
         if (menuVisible && noteId != 0L) {
             val currentText = getCurrentNoteViewText()
             if (currentText != null) {
-                (activity as MainActivity).currentNoteTextChanged(currentText, isUndoAvailable(), isRedoAvailable())
+                // TODO : not yet
+                (activity as MainActivity)
+                    .currentNoteTextChanged(currentText, isUndoAvailable(), isRedoAvailable())
+
+
             }
         }
     }
@@ -115,20 +123,23 @@ class TextFragment : NoteFragment() {
     }
 
     private fun setupFragment() {
-        val config = config ?: return
+        val config = appConfig ?: return
         view.text_note_view.apply {
             typeface = if (config.monospacedFont) Typeface.MONOSPACE else Typeface.DEFAULT
 
             val fileContents = note!!.getNoteStoredValue()
             if (fileContents == null) {
-                (activity as MainActivity).deleteNote(false, note!!)
+                //(activity as MainActivity).deleteNote(false, note!!)
                 return
             }
 
+            /*
             val adjustedPrimaryColor = context.getAdjustedPrimaryColor()
             setColors(config.textColor, adjustedPrimaryColor, config.backgroundColor)
             setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getPercentageFontSize())
-            highlightColor = adjustedPrimaryColor.adjustAlpha(.4f)
+
+             */
+            //highlightColor = adjustedPrimaryColor.adjustAlpha(.4f)
 
             gravity = config.getTextGravity()
             if (text.toString() != fileContents) {
@@ -141,26 +152,20 @@ class TextFragment : NoteFragment() {
                 setSelection(if (config.placeCursorToEnd) text.length else 0)
             }
 
-            if (config.showKeyboard && isMenuVisible) {
+            if (config.showKeyboard) {
                 onGlobalLayout {
                     if (activity?.isDestroyed == false) {
                         requestFocus()
-                        val inputManager = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        inputManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+                        KeyboardUtils.showSoftInput(requireContext(),view.text_note_view)
                     }
                 }
             }
 
-            imeOptions = if (config.useIncognitoMode) {
-                imeOptions or EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING
-            } else {
-                imeOptions.removeBit(EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING)
-            }
         }
 
         if (config.showWordCount) {
             view.notes_counter.beVisible()
-            view.notes_counter.setTextColor(config.textColor)
+            //view.notes_counter.setTextColor(config.textColor)
             setWordCounter(view.text_note_view.text.toString())
         } else {
             view.notes_counter.beGone()
@@ -179,7 +184,7 @@ class TextFragment : NoteFragment() {
     fun removeTextWatcher() = view.text_note_view.removeTextChangedListener(textWatcher)
 
     fun updateNoteValue(value: String) {
-        note?.value = value
+        note?.content = value
     }
 
     fun updateNotePath(path: String) {
@@ -204,9 +209,9 @@ class TextFragment : NoteFragment() {
         val newText = getCurrentNoteViewText()
         val oldText = note!!.getNoteStoredValue()
         if (newText != null && (newText != oldText || force)) {
-            note!!.value = newText
+            note!!.content = newText
             saveNoteValue(note!!)
-            context!!.updateWidgets()
+
         }
     }
 
@@ -216,15 +221,16 @@ class TextFragment : NoteFragment() {
         view.text_note_view.requestFocus()
     }
 
-    private fun saveNoteValue(note: ContactsContract.CommonDataKinds.Note) {
+    private fun saveNoteValue(note: NoteObject) {
         if (note.path.isEmpty()) {
-            NotesHelper(activity!!).insertOrUpdateNote(note) {
+            NotesHelper(requireActivity()).insertOrUpdateNote(note) {
                 (activity as? MainActivity)?.noteSavedSuccessfully(note.title)
             }
         } else {
             val currentText = getCurrentNoteViewText()
             if (currentText != null) {
-                val displaySuccess = activity?.config?.displaySuccess ?: false
+                val displaySuccess = activity?.appConfig?.displaySuccess ?: false
+                // TODO : not yet
                 (activity as? MainActivity)?.tryExportNoteValueToFile(note.path, currentText, displaySuccess)
             }
         }
@@ -248,7 +254,8 @@ class TextFragment : NoteFragment() {
         try {
             text.replace(start, end, edit.before)
         } catch (e: Exception) {
-            activity?.showErrorToast(e)
+            // show Error
+            activity?.showError(e.localizedMessage)
             return
         }
 

@@ -1,30 +1,39 @@
 package com.soufianekre.firenotes.ui.notes
 
-import android.graphics.Color
+import android.content.res.ColorStateList
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.soufianekre.firenotes.R
-import com.soufianekre.firenotes.data.models.ChecklistItem
+import com.soufianekre.firenotes.data.db.models.ChecklistItem
+import com.soufianekre.firenotes.data.db.models.NoteObject
+import com.soufianekre.firenotes.extensions.beVisibleIf
+import com.soufianekre.firenotes.extensions.appConfig
+import com.soufianekre.firenotes.extensions.ensureBackgroundThread
+import com.soufianekre.firenotes.extensions.notesDB
+import com.soufianekre.firenotes.helper.AppConstants.NOTE_ID
+import com.soufianekre.firenotes.helper.KeyboardUtils
 import com.soufianekre.firenotes.helper.NotesHelper
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapter
+import com.soufianekre.firenotes.ui.base.BaseActivity
+import com.soufianekre.firenotes.ui.dialogs.NewChecklistItemDialog
+import kotlinx.android.synthetic.main.fragment_checklist.view.*
 
 
 public class ChecklistFragment : NoteFragment(), ChecklistItemsListener {
 
     private var noteId = 0L
-    private var note: ContactsContract.CommonDataKinds.Note? = null
+    private var noteObject: NoteObject?= null
 
     lateinit var view: ViewGroup
 
     var items = ArrayList<ChecklistItem>()
 
-    val moshi : Moshi = Moshi.Builder().build()
 
-    val checklistItems get(): String = moshi.adapter<ArrayList<ChecklistItem>>().toJson(items)
+    val checklistItems get(): String = Gson().toJson(items)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         view = inflater.inflate(R.layout.fragment_checklist, container, false) as ViewGroup
@@ -42,37 +51,39 @@ public class ChecklistFragment : NoteFragment(), ChecklistItemsListener {
         super.setMenuVisibility(menuVisible)
 
         if (menuVisible) {
-            activity?.hideKeyboard()
+            KeyboardUtils.hideSoftInput(requireActivity())
         }
     }
 
     private fun loadNoteById(noteId: Long) {
-        NotesHelper(activity!!).getNoteWithId(noteId) { storedNote ->
+        NotesHelper(requireActivity()).getNoteWithId(noteId) { storedNote ->
             if (storedNote != null && activity?.isDestroyed == false) {
-                note = storedNote
+                noteObject = storedNote
 
                 try {
                     val checklistItemType = object : TypeToken<List<ChecklistItem>>() {}.type
-                    items = Gson().fromJson<ArrayList<ChecklistItem>>(storedNote.value, checklistItemType)
+                    items = Gson().fromJson<ArrayList<ChecklistItem>>(storedNote.content, checklistItemType)
                         ?: ArrayList(1)
                 } catch (e: Exception) {
                     migrateCheckListOnFailure(storedNote)
                 }
 
-                if (config?.moveUndoneChecklistItems == true) {
+                if (appConfig?.moveUndoneChecklistItems == true) {
                     items.sortBy { it.isDone }
                 }
 
-                activity?.updateTextColors(view.checklist_holder)
+                //activity?.updateTextColors(view.checklist_holder)
                 setupFragment()
             }
         }
     }
 
-    private fun migrateCheckListOnFailure(note: ContactsContract.CommonDataKinds.Note) {
+    private fun migrateCheckListOnFailure(noteObject: NoteObject) {
+
         items.clear()
 
-        note.value.split("\n").map { it.trim() }.filter { it.isNotBlank() }.forEachIndexed { index, value ->
+        noteObject.content?.split("\n")!!
+            .map { it.trim() }.filter { it.isNotBlank() }.forEachIndexed { index, value ->
             items.add(ChecklistItem(
                 id = index,
                 title = value,
@@ -84,23 +95,23 @@ public class ChecklistFragment : NoteFragment(), ChecklistItemsListener {
     }
 
     private fun setupFragment() {
-        if (activity == null || activity!!.isFinishing) {
+        if (activity == null || requireActivity().isFinishing) {
             return
         }
 
-        val plusIcon = resources.getColoredDrawableWithColor(R.drawable.ic_plus_vector, if (activity!!.isBlackAndWhiteTheme()) Color.BLACK else Color.WHITE)
+        val plusIcon = ContextCompat.getDrawable(requireContext(),R.drawable.ic_plus)
 
         view.checklist_fab.apply {
             setImageDrawable(plusIcon)
-            background?.applyColorFilter(activity!!.getAdjustedPrimaryColor())
+            backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorPrimary))
             setOnClickListener {
                 showNewItemDialog()
             }
         }
 
         view.fragment_placeholder_2.apply {
-            setTextColor(activity!!.getAdjustedPrimaryColor())
-            underlineText()
+            //setTextColor(activity!!.getAdjustedPrimaryColor())
+            //underlineText()
             setOnClickListener {
                 showNewItemDialog()
             }
@@ -110,7 +121,8 @@ public class ChecklistFragment : NoteFragment(), ChecklistItemsListener {
     }
 
     private fun showNewItemDialog() {
-        NewChecklistItemDialog(activity as SimpleActivity) { titles ->
+        // TODO : not yet
+        NewChecklistItemDialog(activity as BaseActivity) { titles ->
             var currentMaxId = items.maxBy { item -> item.id }?.id ?: 0
 
             titles.forEach { title ->
@@ -129,7 +141,7 @@ public class ChecklistFragment : NoteFragment(), ChecklistItemsListener {
         updateUIVisibility()
 
         ChecklistAdapter(
-            activity = activity as SimpleActivity,
+            activity = requireActivity(),
             items = items,
             listener = this,
             recyclerView = view.checklist_list,
@@ -139,7 +151,7 @@ public class ChecklistFragment : NoteFragment(), ChecklistItemsListener {
             clickedNote.isDone = !clickedNote.isDone
 
             saveNote(items.indexOfFirst { it.id == clickedNote.id })
-            context?.updateWidgets()
+            //context?.updateWidgets()
         }.apply {
             view.checklist_list.adapter = this
         }
@@ -148,16 +160,16 @@ public class ChecklistFragment : NoteFragment(), ChecklistItemsListener {
     private fun saveNote(refreshIndex: Int = -1) {
         ensureBackgroundThread {
             context?.let { ctx ->
-                note?.let { currentNote ->
+                noteObject?.let { currentNote ->
                     if (refreshIndex != -1) {
                         view.checklist_list.post {
                             view.checklist_list.adapter?.notifyItemChanged(refreshIndex)
                         }
                     }
 
-                    currentNote.value = checklistItems
-                    ctx.notesDB.insertOrUpdate(currentNote)
-                    ctx.updateWidgets()
+                    currentNote.content = checklistItems
+                    ctx.notesDB().notesDao().insertOrUpdate(currentNote)
+                    //ctx.updateWidgets()
                 }
             }
         }
@@ -185,9 +197,7 @@ public class ChecklistFragment : NoteFragment(), ChecklistItemsListener {
         setupAdapter()
     }
 
-    interface ChecklistItemsListener {
 
-    }
 }
 
 

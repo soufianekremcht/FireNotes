@@ -1,11 +1,12 @@
 package com.soufianekre.firenotes.ui.views
 
+
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import com.duolingo.open.rtlviewpager.RtlViewPager
 
-class NotesViewPager : RtlViewPager {
+public class CustomViewPager : RtlViewPager {
 
     constructor(context: Context) : super(context)
 

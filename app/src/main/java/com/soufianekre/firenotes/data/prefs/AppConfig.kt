@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Environment
 import android.view.Gravity
 import com.soufianekre.firenotes.helper.AppConstants
+import com.soufianekre.firenotes.helper.AppConstants.APP_RUN_COUNT
 import com.soufianekre.firenotes.helper.AppConstants.AUTOSAVE_NOTES
 import com.soufianekre.firenotes.helper.AppConstants.CLICKABLE_LINKS
 import com.soufianekre.firenotes.helper.AppConstants.CURRENT_NOTE_ID
@@ -27,7 +28,8 @@ import com.soufianekre.firenotes.helper.AppConstants.SHOW_WORD_COUNT
 import com.soufianekre.firenotes.helper.AppConstants.USE_INCOGNITO_MODE
 import com.soufianekre.firenotes.helper.AppConstants.WIDGET_NOTE_ID
 
-class Config(context: Context)  {
+class AppConfig(context: Context)  {
+
 
     val prefs = context.getSharedPreferences(PrefsConst.PREF_NAME,Context.MODE_PRIVATE)
 

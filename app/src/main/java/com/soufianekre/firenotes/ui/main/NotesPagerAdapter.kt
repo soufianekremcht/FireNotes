@@ -1,23 +1,44 @@
-package com.soufianekre.firenotes.ui.notes
+package com.soufianekre.firenotes.ui.main
 
+import android.app.Activity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
+import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
 
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.soufianekre.firenotes.data.models.NoteObject
+import com.soufianekre.firenotes.data.db.models.NoteObject
+import com.soufianekre.firenotes.extensions.showError
 import com.soufianekre.firenotes.helper.AppConstants
+import com.soufianekre.firenotes.helper.AppConstants.NOTE_ID
+import com.soufianekre.firenotes.ui.notes.ChecklistFragment
+import com.soufianekre.firenotes.ui.notes.NoteFragment
+import com.soufianekre.firenotes.ui.notes.TextFragment
 
-
-class NotesPagerAdapter(val fa: FragmentActivity, val notes: List<NoteObject>)
-            : FragmentStateAdapter(fa) {
-
-    constructor()
+class NotesPagerAdapter(fm: FragmentManager, val notes: List<NoteObject>, val activity: Activity)
+    : FragmentStatePagerAdapter(fm) {
     private var fragments: HashMap<Int, NoteFragment> = LinkedHashMap()
 
+    override fun getCount() = notes.size
 
+    override fun getItem(position: Int): NoteFragment {
+        val bundle = Bundle()
+        val note = notes[position]
+        val id = note.id
+        if (id != null) {
+            bundle.putLong(NOTE_ID, id)
+        }
 
-    //override fun getPageTitle(position: Int) = notes[position].title
+        if (fragments.containsKey(position)) {
+            return fragments[position]!!
+        }
+
+        val fragment = if (note.type == AppConstants.NoteType.TYPE_TEXT.value) TextFragment() else ChecklistFragment()
+        fragment.arguments = bundle
+        fragments[position] = fragment
+        return fragment
+    }
+
+    override fun getPageTitle(position: Int) = notes[position].title
 
     fun updateCurrentNoteData(position: Int, path: String, value: String) {
         (fragments[position] as? TextFragment)?.apply {
@@ -52,13 +73,11 @@ class NotesPagerAdapter(val fa: FragmentActivity, val notes: List<NoteObject>)
 
     fun redo(position: Int) = (fragments[position] as? TextFragment)?.redo()
 
-    /*
     override fun finishUpdate(container: ViewGroup) {
-
         try {
             super.finishUpdate(container)
         } catch (e: Exception) {
-            activity.showErrorToast(e)
+            activity.showError(e.localizedMessage)
         }
     }
 
@@ -68,35 +87,12 @@ class NotesPagerAdapter(val fa: FragmentActivity, val notes: List<NoteObject>)
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-
-    }
-
-    */
-
-    override fun getItemCount(): Int {
-        return notes.size
-    }
-
-    override fun createFragment(position: Int): Fragment {
-        val bundle = Bundle()
-        val note = notes[position]
-        val id = note.id
-        bundle.putLong(NOTE_ID, id)
-
-        if (fragments.containsKey(position)) {
-            return fragments[position]!!
-        }
-
-        val fragment = if (note.type == AppConstants.NoteType.TYPE_TEXT.value) TextFragment() else ChecklistFragment()
-        fragment.arguments = bundle
+        val fragment = super.instantiateItem(container, position) as NoteFragment
         fragments[position] = fragment
         return fragment
-
     }
-
 
     fun removeDoneCheckListItems(position: Int) {
         (fragments[position] as? ChecklistFragment)?.removeDoneItems()
     }
-
 }

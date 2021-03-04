@@ -4,8 +4,8 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import com.soufianekre.firenotes.R
-import com.soufianekre.firenotes.data.models.NoteObject
-import com.soufianekre.firenotes.extensions.config
+import com.soufianekre.firenotes.data.db.models.NoteObject
+import com.soufianekre.firenotes.extensions.appConfig
 import com.soufianekre.firenotes.extensions.ensureBackgroundThread
 import com.soufianekre.firenotes.extensions.notesDB
 import java.io.File
@@ -15,12 +15,12 @@ class NotesHelper(val context: Context) {
     fun getNotes(callback: (notes: ArrayList<NoteObject>) -> Unit) {
         ensureBackgroundThread {
             // make sure the initial note has enough time to be precreated
-            if (context.config.appRunCount <= 1) {
-                context.notesDB().notesDao().getAllNotes()
+            if (context.appConfig.appRunCount <= 1) {
+                context.notesDB().notesDao().getNotes()
                 Thread.sleep(200)
             }
 
-            val notes = context.notesDB().notesDao().getAllNotes() as ArrayList<NoteObject>
+            val notes = context.notesDB().notesDao().getNotes() as ArrayList<NoteObject>
             val notesToDelete = ArrayList<NoteObject>(notes.size)
             notes.forEach {
                 if (it.path.isNotEmpty() && !File(it.path).exists()) {

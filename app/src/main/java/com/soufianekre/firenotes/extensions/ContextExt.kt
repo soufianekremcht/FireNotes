@@ -3,7 +3,7 @@ package com.soufianekre.firenotes.extensions
 import android.content.Context
 import com.bumptech.glide.util.Util.isOnMainThread
 import com.soufianekre.firenotes.data.db.NotesDatabase
-import com.soufianekre.firenotes.data.prefs.Config
+import com.soufianekre.firenotes.data.prefs.AppConfig
 
 
 fun ensureBackgroundThread(callback: () -> Unit) {
@@ -18,5 +18,6 @@ fun ensureBackgroundThread(callback: () -> Unit) {
 
 fun Context.notesDB() : NotesDatabase = NotesDatabase.getInstance(this)
 
-val Context.config : Config
-    get() = Config(this)
+val Context.appConfig : AppConfig
+    get() = AppConfig(this)
+

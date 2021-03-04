@@ -1,34 +1,30 @@
 package com.soufianekre.firenotes.data.db.doa
 
 import androidx.room.*
-import com.soufianekre.firenotes.data.models.NoteObject
-import io.reactivex.Completable
-import io.reactivex.Flowable
+import com.soufianekre.firenotes.data.db.models.NoteObject
 
 @Dao
 interface NotesDao {
 
+    @Query("SELECT * FROM notes ORDER BY title COLLATE NOCASE ASC")
+    fun getNotes(): List<NoteObject>
 
-    @Insert
-    fun insertNote(note: NoteObject): Completable
-
-    @Delete
-    fun deleteNote(note: NoteObject): Completable
-
-
-    @Update
-    fun updateNote(note: NoteObject): Completable
-
-
-    @Query("SELECT * from notes")
-    fun getAllNotes(): Flowable<List<NoteObject>>
-
-
-    @Query("SELECT * from notes WHERE id =:id ")
+    @Query("SELECT * FROM notes WHERE id = :id")
     fun getNoteWithId(id: Long): NoteObject?
 
+    @Query("SELECT id FROM notes WHERE path = :path")
+    fun getNoteIdWithPath(path: String): Long?
+
+    @Query("SELECT id FROM notes WHERE title = :title COLLATE NOCASE")
+    fun getNoteIdWithTitle(title: String): Long?
+
+    @Query("SELECT id FROM notes WHERE title = :title")
+    fun getNoteIdWithTitleCaseSensitive(title: String): Long?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertOrUpdate(note: NoteObject): Long
 
-    fun getNoteIdWithPath(path: String): @ParameterName(name = "id") Long?
+    @Delete
+    fun deleteNote(note: NoteObject)
 
 }

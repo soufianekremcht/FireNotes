@@ -9,7 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.soufianekre.firenotes.R
 import com.soufianekre.firenotes.data.db.doa.NotesDao
-import com.soufianekre.firenotes.data.models.NoteObject
+import com.soufianekre.firenotes.data.db.models.NoteObject
 import com.soufianekre.firenotes.helper.AppConstants
 import java.util.*
 import java.util.concurrent.Executors
@@ -23,7 +23,7 @@ abstract class NotesDatabase : RoomDatabase() {
     companion object {
 
         var instance: NotesDatabase? = null
-        fun getInstance(context: Context) : NotesDatabase{
+        fun getInstance(context: Context): NotesDatabase {
             if (instance == null) {
                 if (instance == null) {
                     synchronized(NotesDatabase::class) {
@@ -44,8 +44,8 @@ abstract class NotesDatabase : RoomDatabase() {
                         }
                     }
                 }
-                return instance!!
             }
+            return instance!!
         }
 
         fun destroyInstance() {
@@ -65,7 +65,7 @@ abstract class NotesDatabase : RoomDatabase() {
                     Color.GREEN,
                     AppConstants.NoteType.TYPE_TEXT.value
                 )
-                instance!!.notesDao().insertNote(note)
+                instance!!.notesDao().insertOrUpdate(note)
             }
         }
 

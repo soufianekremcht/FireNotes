@@ -1,65 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
 
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/checklist_holder"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/checklist_holder"
+    <RelativeLayout
+        android:id="@+id/checklist_items_holder"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/checklist_items_holder"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/checklist_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/checklist_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:overScrollMode="never"
-                android:visibility="gone"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        <TextView
+            android:id="@+id/fragment_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_normal"
+            android:alpha="0.8"
+            android:gravity="center"
+            android:paddingStart="@dimen/spacing_normal"
+            android:paddingEnd="@dimen/spacing_normal"
+            android:text="@string/checklist_is_empty"
+            android:textSize="@dimen/font_large"
+            android:textStyle="italic"
+            android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/fragment_placeholder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_normal"
-                android:alpha="0.8"
-                android:gravity="center"
-                android:paddingStart="@dimen/spacing_normal"
-                android:paddingEnd="@dimen/spacing_normal"
-                android:text="@string/checklist_is_empty"
-                android:textSize="@dimen/font_large"
-                android:textStyle="italic"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/fragment_placeholder_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/fragment_placeholder"
-                android:layout_centerHorizontal="true"
-                android:background="?attr/selectableItemBackground"
-                android:gravity="center"
-                android:padding="@dimen/spacing_normal"
-                android:text="@string/add_new_checklist_items"
-                android:textSize="@dimen/font_large"
-                android:visibility="gone" />
-        </RelativeLayout>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/checklist_fab"
+        <TextView
+            android:id="@+id/fragment_placeholder_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/spacing_normal"
-            android:src="@drawable/ic_add" />
+            android:layout_below="@+id/fragment_placeholder"
+            android:layout_centerHorizontal="true"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:padding="@dimen/spacing_normal"
+            android:text="@string/add_new_checklist_items"
+            android:textSize="@dimen/font_large"
+            android:visibility="gone" />
+    </RelativeLayout>
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/checklist_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/spacing_normal"
+        android:src="@drawable/ic_add" />
 
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-
-</layout>

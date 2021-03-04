@@ -1,6 +1,6 @@
 package com.soufianekre.firenotes.extensions
 
 import androidx.fragment.app.Fragment
-import com.soufianekre.firenotes.data.prefs.Config
+import com.soufianekre.firenotes.data.prefs.AppConfig
 
-val Fragment.config: Config? get() = if (context != null) Config(context!!) else null
+val Fragment.appConfig: AppConfig? get() = if (context != null) AppConfig(context!!) else null

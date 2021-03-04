@@ -2,7 +2,7 @@ package com.soufianekre.firenotes.extensions
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.soufianekre.firenotes.data.models.ChecklistItem
+import com.soufianekre.firenotes.data.db.models.ChecklistItem
 
 
 fun String.parseChecklistItems(): ArrayList<ChecklistItem>? {

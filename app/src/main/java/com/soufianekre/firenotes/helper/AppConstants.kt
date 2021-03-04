@@ -8,6 +8,8 @@ object AppConstants {
     enum class NoteType(val value: Int) { TYPE_TEXT(0), TYPE_CHECKLIST(1) }
 
 
+    const val APP_RUN_COUNT: String = "app_run_count"
+
     const val NOTE_ID = "note_id"
     const val OPEN_NOTE_ID = "open_note_id"
     const val DONE_CHECKLIST_ITEM_ALPHA = 0.4f
@@ -59,4 +61,8 @@ object AppConstants {
     const val FONT_SIZE_300_PERCENT = 300
 
 
+    // others
+
+    const val NOMEDIA :String = "nomedia"
+    const val MD5 : String = "MD5"
 }
