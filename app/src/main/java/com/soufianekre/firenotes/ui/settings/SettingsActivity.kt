@@ -1,5 +1,7 @@
 package com.soufianekre.firenotes.ui.settings
 
-public class SettingsActivity {
+import com.soufianekre.firenotes.ui.base.BaseActivity
+
+public class SettingsActivity : BaseActivity() {
 
 }
