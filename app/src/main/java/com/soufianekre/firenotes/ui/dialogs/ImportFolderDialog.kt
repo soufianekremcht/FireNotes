@@ -8,6 +8,7 @@ class ImportFolderDialog(val activity :BaseActivity) {
     init {
         MaterialDialog(activity).show {
             title(text = "Import File")
+
             positiveButton(text = "Import")
             negativeButton(text = "Cancel")
         }

@@ -26,7 +26,6 @@ import com.soufianekre.firenotes.helper.KeyboardUtils
 import com.soufianekre.firenotes.helper.NotesHelper
 import com.soufianekre.firenotes.ui.base.BaseActivity
 import com.soufianekre.firenotes.ui.dialogs.*
-import com.soufianekre.firenotes.ui.dialogs.models.RadioItem
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
@@ -114,8 +113,7 @@ class MainActivity : BaseActivity() {
             initViewPager()
         }
 
-        var textColor = ContextCompat.getColor(this, R.color.colorAccent)
-        var backgroundColor = ContextCompat.getColor(this, R.color.colorPrimary)
+
         invalidateOptionsMenu()
 
         pager_title_strip.apply {
@@ -286,27 +284,6 @@ class MainActivity : BaseActivity() {
     }
 
     private fun handleTextIntent(text: String) {
-        NotesHelper(this).getNotes {
-            val notes = it
-            val list = arrayListOf<RadioItem>().apply {
-                add(RadioItem(0, getString(R.string.create_new_note)))
-                notes.forEachIndexed { index, note ->
-                    add(RadioItem(index + 1, note.title!!))
-                }
-            }
-
-
-            RadioGroupDialog(this, list, -1, R.string.add_to_note) {
-                if (it as Int == 0) {
-                    displayNewNoteDialog(text)
-                } else {
-                    updateSelectedNote(notes[it - 1].id!!)
-                    //addTextToCurrentNote(if (mCurrentNote.value.isEmpty()) text else "\n$text")
-
-
-                }
-            }
-        }
     }
 
     private fun handleUri(uri: Uri) {
@@ -490,7 +467,9 @@ class MainActivity : BaseActivity() {
 
     private fun displayDeleteNotePrompt() {
         // TODO : not yet
-        DeleteNoteDialog(this)
+        DeleteNoteDialog(this,mCurrentNote){
+            showError("Note has been deleted.")
+        }
 
     }
 

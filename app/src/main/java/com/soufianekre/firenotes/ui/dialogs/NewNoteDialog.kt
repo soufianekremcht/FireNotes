@@ -20,7 +20,7 @@ class NewNoteDialog(val activity: BaseActivity, title: String? = null, callback:
         }
 
         val type = AppConstants.NoteType.TYPE_TEXT.value
-        var newNote =NoteObject(title = title.toString(), content = "", type = type)
+        var newNote: NoteObject? = null
 
         view.note_title.setText(title)
         MaterialDialog(activity).show {
@@ -30,7 +30,7 @@ class NewNoteDialog(val activity: BaseActivity, title: String? = null, callback:
             input(hint = "Your Hint Text") { _, title ->
                 run {
                     newNote = NoteObject(title = title.toString(), content = "", type = type)
-                    callback(newNote)
+                    callback(newNote!!)
                     dismiss()
                 }
             }

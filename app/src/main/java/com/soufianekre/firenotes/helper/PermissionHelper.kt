@@ -17,7 +17,7 @@ object PermissionHelper {
 
 
     fun  getStoragePermission(context :Context){
-        val onDeniedlistener  =
+        val onDeniedPermissionListener  =
             DialogOnAnyDeniedMultiplePermissionsListener.Builder
                 .withContext(context)
                 .withTitle("Storage permission")
@@ -41,7 +41,7 @@ object PermissionHelper {
             }
         }
 
-        var compositeListener = CompositeMultiplePermissionsListener(listener,onDeniedlistener)
+        var compositeListener = CompositeMultiplePermissionsListener(listener,onDeniedPermissionListener)
 
 
         Dexter.withContext(context).withPermissions(Manifest.permission_group.STORAGE)
