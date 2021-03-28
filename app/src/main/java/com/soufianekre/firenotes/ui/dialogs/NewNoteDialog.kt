@@ -2,6 +2,8 @@ package com.soufianekre.firenotes.ui.dialogs
 
 import android.content.DialogInterface.BUTTON_POSITIVE
 import androidx.appcompat.app.AlertDialog
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.input
 import com.soufianekre.firenotes.R
 import com.soufianekre.firenotes.data.db.models.NoteObject
 import com.soufianekre.firenotes.extensions.*
@@ -17,8 +19,27 @@ class NewNoteDialog(val activity: BaseActivity, title: String? = null, callback:
             new_note_type.check(if (activity.appConfig.lastCreatedNoteType == AppConstants.NoteType.TYPE_TEXT.value) type_text_note.id else type_checklist.id)
         }
 
-        view.note_title.setText(title)
+        val type = AppConstants.NoteType.TYPE_TEXT.value
+        var newNote =NoteObject(title = title.toString(), content = "", type = type)
 
+        view.note_title.setText(title)
+        MaterialDialog(activity).show {
+
+            title(R.string.add_new_note)
+
+            input(hint = "Your Hint Text") { _, title ->
+                run {
+                    newNote = NoteObject(title = title.toString(), content = "", type = type)
+                    callback(newNote)
+                    dismiss()
+                }
+            }
+            positiveButton {
+
+
+            }
+        }
+        /*
         AlertDialog.Builder(activity)
             .setTitle(R.string.add_new_note)
             .setPositiveButton(R.string.ok, null)
@@ -60,5 +81,7 @@ class NewNoteDialog(val activity: BaseActivity, title: String? = null, callback:
                     }
                 }
             }
+
+         */
     }
 }

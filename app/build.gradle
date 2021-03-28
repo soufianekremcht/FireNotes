@@ -129,6 +129,7 @@ dependencies {
     // biometric finger print helper
     implementation "androidx.biometric:biometric:$versions.biometricVersion"
     implementation 'co.infinum:goldfinger:2.0.1'
+
     // dexter permission
     implementation 'com.karumi:dexter:6.2.2'
 
@@ -145,7 +146,7 @@ dependencies {
 
     / ***** Testing ******/
 
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
 
     testImplementation "androidx.test:core:$versions.androidxTest"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$versions.mockitoKotlinVersion"

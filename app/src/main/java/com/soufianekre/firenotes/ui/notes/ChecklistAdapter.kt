@@ -15,7 +15,7 @@ import com.soufianekre.firenotes.data.db.models.ChecklistItem
 import com.soufianekre.firenotes.extensions.beVisibleIf
 import com.soufianekre.firenotes.extensions.appConfig
 import com.soufianekre.firenotes.helper.AppConstants.DONE_CHECKLIST_ITEM_ALPHA
-import com.soufianekre.firenotes.ui.dialogs.RenameChecklistItemDialog
+import com.soufianekre.firenotes.ui.dialogs.RenameCheckListDialog
 import kotlinx.android.synthetic.main.item_checklist.view.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -344,7 +344,7 @@ open class ChecklistAdapter(
 
     private fun renameChecklistItem() {
         val item = getSelectedItems().first()
-        RenameChecklistItemDialog(activity!!, item.title) {
+        RenameCheckListDialog(activity!!, item.title) {
             val position = getSelectedItemPositions().first()
             item.title = it
             listener?.saveChecklist()

@@ -9,7 +9,7 @@ import com.soufianekre.firenotes.extensions.showInfo
 import com.soufianekre.firenotes.helper.KeyboardUtils
 import kotlinx.android.synthetic.main.dialog_new_checklist_item.view.*
 
-class NewChecklistItemDialog(val activity: Activity, callback: (titles: ArrayList<String>) -> Unit) {
+class NewCheckListDialog(val activity: Activity, callback: (titles: ArrayList<String>) -> Unit) {
     init {
         val view = activity.layoutInflater.inflate(R.layout.dialog_new_checklist_item, null)
 

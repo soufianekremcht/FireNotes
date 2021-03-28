@@ -19,7 +19,7 @@ import com.soufianekre.firenotes.helper.AppConstants.NOTE_ID
 import com.soufianekre.firenotes.helper.KeyboardUtils
 import com.soufianekre.firenotes.helper.NotesHelper
 import com.soufianekre.firenotes.ui.base.BaseActivity
-import com.soufianekre.firenotes.ui.dialogs.NewChecklistItemDialog
+import com.soufianekre.firenotes.ui.dialogs.NewCheckListDialog
 import kotlinx.android.synthetic.main.fragment_checklist.view.*
 
 
@@ -31,7 +31,6 @@ public class ChecklistFragment : NoteFragment(), ChecklistItemsListener {
     lateinit var view: ViewGroup
 
     var items = ArrayList<ChecklistItem>()
-
 
     val checklistItems get(): String = Gson().toJson(items)
 
@@ -122,7 +121,7 @@ public class ChecklistFragment : NoteFragment(), ChecklistItemsListener {
 
     private fun showNewItemDialog() {
         // TODO : not yet
-        NewChecklistItemDialog(activity as BaseActivity) { titles ->
+        NewCheckListDialog(activity as BaseActivity) { titles ->
             var currentMaxId = items.maxBy { item -> item.id }?.id ?: 0
 
             titles.forEach { title ->

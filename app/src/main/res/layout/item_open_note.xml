@@ -1,34 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout>
 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/open_note_item_holder"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/spacing_small"
+    android:orientation="horizontal">
 
-    <data>
-
-
-    </data>
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/open_note_item_holder"
+    <com.google.android.material.radiobutton.MaterialRadioButton
+        android:id="@+id/open_note_item_radio_button"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/spacing_normal">
+        android:layout_height="wrap_content"
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/open_note_item_radio_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/open_note_item_icon" />
+        />
 
-        <ImageView
-            android:id="@+id/open_note_item_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="@dimen/spacing_small"
-            android:padding="@dimen/spacing_small"
-            android:src="@drawable/ic_attach" />
+    <ImageView
+        android:id="@+id/open_note_item_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_small"
+        android:padding="@dimen/spacing_small"
+        android:src="@drawable/ic_attach"
+        />
 
-    </RelativeLayout>
-
-</layout>
+</LinearLayout>

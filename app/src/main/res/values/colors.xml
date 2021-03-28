@@ -112,4 +112,5 @@
     <color name="error_color_material">#F4511E</color>
 
     <color name="bg_circle_default">@color/colorPrimary</color>
+    <color name="divider_grey">#BA201C1C</color>
 </resources>

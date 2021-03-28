@@ -38,14 +38,14 @@ class RadioGroupDialog(val activity: Activity, val items: ArrayList<RadioItem>, 
             }
         }
 
-        val builder = AlertDialog.Builder(activity)
+        val dialogBuilder = AlertDialog.Builder(activity)
             .setOnCancelListener { cancelCallback?.invoke() }
 
         if (selectedItemId != -1 && showOKButton) {
-            builder.setPositiveButton(R.string.ok) { dialog, which -> itemSelected(selectedItemId) }
+            dialogBuilder.setPositiveButton(R.string.ok) { dialog, which -> itemSelected(selectedItemId) }
         }
 
-        dialog = builder.create().apply {
+        dialog = dialogBuilder.create().apply {
             activity.setupDialogStuff(view, this, titleId)
         }
 

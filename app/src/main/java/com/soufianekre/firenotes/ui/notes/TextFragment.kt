@@ -125,7 +125,7 @@ class TextFragment : NoteFragment() {
     private fun setupFragment() {
         val config = appConfig ?: return
         view.text_note_view.apply {
-            typeface = if (config.monospacedFont) Typeface.MONOSPACE else Typeface.DEFAULT
+            typeface = if (!config.monospacedFont) Typeface.MONOSPACE else Typeface.DEFAULT
 
             val fileContents = note!!.getNoteStoredValue()
             if (fileContents == null) {
@@ -156,7 +156,7 @@ class TextFragment : NoteFragment() {
                 onGlobalLayout {
                     if (activity?.isDestroyed == false) {
                         requestFocus()
-                        KeyboardUtils.showSoftInput(requireContext(),view.text_note_view)
+                        //KeyboardUtils.showSoftInput(requireContext(),view.text_note_view)
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package com.soufianekre.firenotes.ui.main
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.TypedValue
@@ -13,8 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.input.input
 import com.soufianekre.firenotes.MyViewModelFactory
 import com.soufianekre.firenotes.R
 import com.soufianekre.firenotes.data.db.NotesDatabase
@@ -26,10 +25,8 @@ import com.soufianekre.firenotes.helper.AppConstants.MIME_TEXT_PLAIN
 import com.soufianekre.firenotes.helper.KeyboardUtils
 import com.soufianekre.firenotes.helper.NotesHelper
 import com.soufianekre.firenotes.ui.base.BaseActivity
-import com.soufianekre.firenotes.ui.dialogs.NewNoteDialog
-import com.soufianekre.firenotes.ui.dialogs.RadioGroupDialog
+import com.soufianekre.firenotes.ui.dialogs.*
 import com.soufianekre.firenotes.ui.dialogs.models.RadioItem
-import com.soufianekre.firenotes.ui.settings.SettingsActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
@@ -75,7 +72,7 @@ class MainActivity : BaseActivity() {
 
         initViewPager()
 
-        var textColor = ContextCompat.getColor(this, R.color.black)
+        val textColor = ContextCompat.getColor(this, R.color.black)
         viewBinding.pagerTitleStrip.apply {
             setTextSize(TypedValue.COMPLEX_UNIT_PX, getPercentageFontSize())
             setGravity(Gravity.CENTER_VERTICAL)
@@ -120,23 +117,15 @@ class MainActivity : BaseActivity() {
         var textColor = ContextCompat.getColor(this, R.color.colorAccent)
         var backgroundColor = ContextCompat.getColor(this, R.color.colorPrimary)
         invalidateOptionsMenu()
+
         pager_title_strip.apply {
             setTextSize(TypedValue.COMPLEX_UNIT_PX, getPercentageFontSize())
             setGravity(Gravity.CENTER_VERTICAL)
             setNonPrimaryAlpha(0.4f)
-            setTextColor(textColor)
-        }
-        // TODO : not yet
-        //updateTextColors(view_pager)
-
-        //viewBinding.searchWrapper.setBackgroundColor(backgroundColor)
-        //val contrastColor = config.primaryColor.getContrastColor()
-        /*
-        arrayListOf(searchPrevBtn, searchNextBtn, searchClearBtn).forEach {
-            it.applyColorFilter(contrastColor)
+            setTextColor(Color.BLACK)
         }
 
-         */
+
     }
 
     override fun onPause() {
@@ -165,9 +154,8 @@ class MainActivity : BaseActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val multipleNotesExist = mNotes.size > 1
-        showInfo("Notes Count"  + mNotes.size)
-
         menu.apply {
+
             findItem(R.id.rename_note).isVisible = multipleNotesExist
             findItem(R.id.open_note).isVisible = multipleNotesExist
             findItem(R.id.delete_note).isVisible = multipleNotesExist
@@ -191,7 +179,6 @@ class MainActivity : BaseActivity() {
         }
         when (item.itemId) {
             R.id.open_note -> displayOpenNoteDialog()
-            R.id.save_note -> saveNote()
             R.id.undo -> undo()
             R.id.redo -> redo()
             R.id.new_note -> displayNewNoteDialog("")
@@ -210,6 +197,7 @@ class MainActivity : BaseActivity() {
 
 
     private fun initViewPager(wantedNoteId: Long? = null) {
+
         NotesHelper(this).getNotes {
             mNotes = it
             invalidateOptionsMenu()
@@ -224,6 +212,8 @@ class MainActivity : BaseActivity() {
                 currentItem = getWantedNoteIndex(wantedNoteId)
                 appConfig.currentNoteId = mCurrentNote.id!!
 
+
+
                 addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                     override fun onPageScrollStateChanged(state: Int) {}
 
@@ -232,11 +222,13 @@ class MainActivity : BaseActivity() {
                         positionOffset: Float,
                         positionOffsetPixels: Int
                     ) {
+
                     }
 
                     override fun onPageSelected(position: Int) {
                         mCurrentNote = mNotes[position]
                         appConfig.currentNoteId = mCurrentNote.id!!
+
                         invalidateOptionsMenu()
                     }
                 })
@@ -260,7 +252,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun getPercentageFontSize(): Float {
-        return 13f
+        return 17f
     }
 
 
@@ -337,6 +329,7 @@ class MainActivity : BaseActivity() {
 
 
     private fun currentNotesView() = mAdapter?.getCurrentNotesView(viewBinding.mainViewPager.currentItem)
+
 
     private fun updateSelectedNote(id: Long) {
         appConfig.currentNoteId = id
@@ -476,9 +469,10 @@ class MainActivity : BaseActivity() {
 
     /** Dialogs ***/
 
-    private fun displayNewNoteDialog(noteTitle: String) {
+    private fun displayNewNoteDialog(noteText: String) {
         // TODO : not yet
-        NewNoteDialog(this, noteTitle) {
+
+        NewNoteDialog(this, noteText) {
             it.content = ""
             addNewNote(it)
         }
@@ -486,40 +480,38 @@ class MainActivity : BaseActivity() {
     }
 
     private fun displayRenameDialog() {
-        // TODO : not yet
 
-        MaterialDialog(this).show {
-            input()
-            positiveButton(R.string.submit)
+        RenameNoteDialog(this,mCurrentNote,getCurrentNoteText()){
+            mCurrentNote = it
+            initViewPager(mCurrentNote.id)
         }
 
     }
 
     private fun displayDeleteNotePrompt() {
         // TODO : not yet
-        MaterialDialog(this).show {
-            input()
-            positiveButton(R.string.submit)
-        }
+        DeleteNoteDialog(this)
 
     }
 
     private fun displayOpenNoteDialog() {
-        // TODO("Not yet implemented")
-    }
+     OpenNoteDialog(this) { noteId, newNote ->
+         if (newNote == null) {
+             updateSelectedNote(noteId)
+         } else {
+             addNewNote(newNote)
+         }
+     }}
 
-    private fun saveNote() {
-        // TODO("Not yet implemented")
-    }
+
+
+
 
 
     /*** Others ***/
 
     private fun saveCurrentNote(b: Boolean) {
-        MaterialDialog(this).show {
-            input()
-            positiveButton(R.string.submit)
-        }
+        // TODO
 
     }
 
@@ -554,7 +546,11 @@ class MainActivity : BaseActivity() {
     fun tryExportNoteValueToFile(path: String, currentText: String, displaySuccess: Boolean) {
         // TODO("Not yet implemented")
     }
-
+    private fun getPagerAdapter() = viewBinding.mainViewPager.adapter as NotesPagerAdapter
+    private fun getCurrentNoteText() = getPagerAdapter().getCurrentNoteViewText(viewBinding.mainViewPager.currentItem)
 
 }
+
+
+
 

@@ -24,15 +24,13 @@ class NotesPagerAdapter(fm: FragmentManager, val notes: List<NoteObject>, val ac
         val bundle = Bundle()
         val note = notes[position]
         val id = note.id
-        if (id != null) {
-            bundle.putLong(NOTE_ID, id)
-        }
+        bundle.putLong(NOTE_ID, id)
 
         if (fragments.containsKey(position)) {
             return fragments[position]!!
         }
 
-        val fragment = if (note.type == AppConstants.NoteType.TYPE_TEXT.value) TextFragment() else ChecklistFragment()
+        val fragment = TextFragment()
         fragment.arguments = bundle
         fragments[position] = fragment
         return fragment

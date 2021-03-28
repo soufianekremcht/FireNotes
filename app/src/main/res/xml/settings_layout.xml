@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="settings_layout">
+    <PreferenceCategory android:title="TEXT">
+
+
+        <SwitchPreferenceCompat android:title="Show word count"
+            />
+
+        <SwitchPreferenceCompat android:title="Make links and emails clickable"
+
+            />
+
+        <SwitchPreferenceCompat android:title="User monospaced font"
+            />
+        <SwitchPreferenceCompat android:title="Use incognito mode of keyboards"
+            />
+
+        <SwitchPreferenceCompat android:title="Enable line wrap"/>
+
+        <MultiSelectListPreference android:title="Font size"
+            android:entryValues="@array/entries_font_size"
+            android:entries="@array/entries_values_font_size"
+            />
+
+        <MultiSelectListPreference android:title="Alignment"
+            android:entryValues="@array/entries_alignment"
+            android:entries="@array/entries_values_alignment"
+            />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="STARTUP">
+
+        <SwitchPreferenceCompat android:title="Place cursor to the end of note"/>
+        <SwitchPreferenceCompat android:title="Show keyboard on startup"/>
+        <SwitchPreferenceCompat android:title="Show a note picker on startup"/>
+
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="SAVING">
+
+        <SwitchPreferenceCompat android:title="Autosave notes"/>
+        <SwitchPreferenceCompat android:title="Display save success messages"/>
+
+
+    </PreferenceCategory>
+
+
+
+
+</PreferenceScreen>
